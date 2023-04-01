@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/ndgc-app",
+            "outputPath": "dist/ndgc-app/browser",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -56,7 +56,13 @@
               "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true
+              "namedChunks": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -97,8 +103,87 @@
             ],
             "scripts": []
           }
+        },
+        "server": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "dist/ndgc-app/server",
+            "main": "server.ts",
+            "tsConfig": "tsconfig.server.json",
+            "inlineStyleLanguage": "scss"
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "media"
+            },
+            "development": {
+              "optimization": false,
+              "sourceMap": true,
+              "extractLicenses": false,
+              "vendorChunk": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
+                }
+              ]
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve-ssr": {
+          "builder": "@nguniversal/builders:ssr-dev-server",
+          "configurations": {
+            "development": {
+              "browserTarget": "ndgc-app:build:development",
+              "serverTarget": "ndgc-app:server:development"
+            },
+            "production": {
+              "browserTarget": "ndgc-app:build:production",
+              "serverTarget": "ndgc-app:server:production"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "prerender": {
+          "builder": "@nguniversal/builders:prerender",
+          "options": {
+            "routes": [
+              "/"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "ndgc-app:build:production",
+              "serverTarget": "ndgc-app:server:production"
+            },
+            "development": {
+              "browserTarget": "ndgc-app:build:development",
+              "serverTarget": "ndgc-app:server:development"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "deploy": {
+          "builder": "@angular/fire:deploy",
+          "options": {
+            "ssr": "cloud-functions",
+            "prerender": true,
+            "firebaseProject": "nybro-dgc",
+            "firebaseHostingSite": "nybro-dgc",
+            "functionName": "ssr_ndgc-app",
+            "functionsNodeVersion": "16",
+            "region": "us-central1",
+            "browserTarget": "ndgc-app:build:production",
+            "serverTarget": "ndgc-app:server:production",
+            "prerenderTarget": "ndgc-app:prerender:production",
+            "outputPath": "dist/ndgc-app/functions"
+          }
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

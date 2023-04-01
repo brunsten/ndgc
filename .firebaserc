@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "nybro-dgc": {
+      "hosting": {
+        "ndgc-app": [
+          "nybro-dgc"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "nybro-dgc"
+  }
+}
